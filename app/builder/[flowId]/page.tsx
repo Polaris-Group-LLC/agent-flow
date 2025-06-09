@@ -1859,7 +1859,7 @@ export default function BuilderPage() {
               data-tutorial="run-agent"
               onClick={handleRunAgentFromBuilder}
               disabled={isAgentRunning}
-              className="px-6 py-3 text-base font-medium rounded-lg shadow-md transition-all duration-200 flex items-center justify-center gap-2 bg-white text-slate-700 hover:bg-slate-50 disabled:opacity-60 disabled:cursor-not-allowed border border-slate-300 hover:shadow-lg"
+              className="px-6 py-3 text-base font-medium rounded-lg shadow-md transition-all duration-200 flex items-center justify-center gap-2 bg-background text-foreground hover:bg-background/90 disabled:opacity-60 disabled:cursor-not-allowed border border-border hover:shadow-lg"
               title="Run Agent from Flow"
             >
               {isAgentRunning ? (

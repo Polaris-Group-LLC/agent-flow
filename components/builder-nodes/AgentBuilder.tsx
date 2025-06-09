@@ -67,7 +67,8 @@ const AgentBuilder: React.FC<AgentBuilderProps> = ({ onSubmit }) => {
           <DialogHeader>
             <DialogTitle>Create New Agent</DialogTitle>
             <DialogDescription>
-              Describe your agent and provide API keys to automatically generate a flow.
+              Describe your agent and provide API keys to automatically generate
+              a flow.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -83,7 +84,8 @@ const AgentBuilder: React.FC<AgentBuilderProps> = ({ onSubmit }) => {
                 required
               />
               <p className="text-xs text-muted-foreground">
-                Example: "A customer service agent that can answer questions about our products and handle returns."
+                Example: "A customer service agent that can answer questions
+                about our products and handle returns."
               </p>
             </div>
             <div className="grid gap-2">
@@ -114,9 +116,24 @@ const AgentBuilder: React.FC<AgentBuilderProps> = ({ onSubmit }) => {
           <DialogFooter>
             <Button type="submit" className="gap-2" disabled={loading}>
               {loading ? (
-                <svg className="animate-spin h-4 w-4 text-slate-700" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                <svg
+                  className="animate-spin h-4 w-4 text-slate-700"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    fill="none"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  />
                 </svg>
               ) : (
                 <Bot className="h-4 w-4" />
@@ -130,4 +147,4 @@ const AgentBuilder: React.FC<AgentBuilderProps> = ({ onSubmit }) => {
   );
 };
 
-export default AgentBuilder; 
+export default AgentBuilder;
