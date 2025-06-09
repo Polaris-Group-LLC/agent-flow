@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -119,18 +120,19 @@ export default function DashboardPage() {
           </div>
         </header>
         <div className="flex items-center gap-3 mb-4">
-          <button
-            className="p-2 rounded-lg bg-zinc-800/70 text-zinc-300 hover:bg-zinc-700 transition hover:scale-105 hover:shadow-xl"
+          <Button
+            variant="secondary"
+            size="icon"
             onClick={() => {}}
           >
             <LayoutGrid size={18} />
-          </button>
-          <input
+          </Button>
+          <Input
             type="text"
             placeholder="Search flows"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="flex-1 px-4 py-2 rounded-lg bg-zinc-900/80 border border-zinc-800 text-zinc-200 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="flex-1"
           />
         </div>
         <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -159,16 +161,23 @@ export default function DashboardPage() {
                     <LayoutGrid size={20} className="text-primary" />
                     {editingId === flow.id ? (
                       <form onSubmit={e => { e.preventDefault(); handleRename(flow.id, editValue) }} className="flex items-center gap-1">
-                        <input
+                        <Input
                           autoFocus
                           value={editValue}
                           onChange={e => setEditValue(e.target.value)}
                           onBlur={() => handleRename(flow.id, editValue)}
-                          className="text-lg font-semibold bg-transparent border-b border-primary text-white focus:outline-none px-1 w-32"
+                          variant="underlined"
+                          className="text-lg font-semibold w-32"
                         />
-                        <button type="submit" className="ml-1 p-1 rounded hover:bg-primary/20 transition disabled:opacity-60 disabled:cursor-not-allowed" disabled={renameLoading === flow.id}>
+                        <Button 
+                          type="submit" 
+                          size="icon" 
+                          variant="ghost" 
+                          className="ml-1 h-7 w-7" 
+                          disabled={renameLoading === flow.id}
+                        >
                           {renameLoading === flow.id ? <Loader2 className="animate-spin" size={16} /> : <Check size={16} />}
-                        </button>
+                        </Button>
                       </form>
                     ) : (
                       <span
@@ -180,17 +189,19 @@ export default function DashboardPage() {
                       </span>
                     )}
                   </div>
-                  <button
+                  <Button
                     onClick={(e) => handleDelete(e, flow.id)}
-                    className="p-2 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-red-500/20 transition-all duration-200"
+                    variant="ghost"
+                    size="icon"
+                    className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-600"
                     disabled={deleteLoading === flow.id}
                   >
                     {deleteLoading === flow.id ? (
-                      <Loader2 className="animate-spin text-red-500" size={18} />
+                      <Loader2 className="animate-spin" size={18} />
                     ) : (
-                      <Trash2 size={18} className="text-red-500" />
+                      <Trash2 size={18} />
                     )}
-                  </button>
+                  </Button>
                 </div>
                 <div className="text-zinc-400 text-sm mb-1">{flow.description}</div>
                 <div className="flex items-center gap-2 mt-auto text-xs text-zinc-500">
@@ -201,7 +212,7 @@ export default function DashboardPage() {
           ) : (
             <div className="flex flex-col items-center justify-center h-96 bg-gradient-to-br from-primary/60 to-gray-700/60 rounded-2xl shadow-xl p-8">
               <h2 className="text-2xl font-bold text-white mb-2">Getting started with AgentFlow</h2>
-              <button onClick={handleCreateFlow} className="mt-4 px-6 py-2 bg-primary text-white rounded-lg font-semibold shadow hover:bg-primary/90 transition hover:scale-105 hover:shadow-xl">Start learning</button>
+              <Button onClick={handleCreateFlow} size="lg" className="mt-4">Start learning</Button>
             </div>
           )}
         </section>
