@@ -1,85 +1,132 @@
-import * as React from "react"
+"use client";
 
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { 
+  Card as HeroUICard, 
+  CardHeader as HeroUICardHeader,
+  CardBody as HeroUICardBody,
+  CardFooter as HeroUICardFooter
+} from "@heroui/react";
+import { cn } from "@/lib/utils";
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card"
-      className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
+interface CardProps extends React.ComponentProps<"div"> {
+  isPressable?: boolean;
+  isBlurred?: boolean;
+  shadow?: "none" | "sm" | "md" | "lg";
+  radius?: "none" | "sm" | "md" | "lg";
+  onPress?: () => void;
+}
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, children, isPressable, isBlurred, shadow = "sm", radius = "lg", onPress, ...props }) => {
+    // HeroUI Card doesn't accept ref directly, we'll use the props approach
+    const cardProps: any = {
+      className: cn(
+        "bg-card text-card-foreground",
         className
-      )}
-      {...props}
-    />
-  )
-}
+      ),
+      isPressable,
+      isBlurred,
+      shadow,
+      radius,
+      onPress,
+      ...props
+    };
+    
+    return (
+      <HeroUICard {...cardProps}>
+        {children}
+      </HeroUICard>
+    );
+  }
+);
 
-function CardHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-header"
-      className={cn(
-        "@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-1.5 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6",
-        className
-      )}
-      {...props}
-    />
-  )
-}
+Card.displayName = "Card";
 
-function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-title"
-      className={cn("leading-none font-semibold", className)}
-      {...props}
-    />
-  )
-}
+const CardHeader = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
+  ({ className, ...props }) => {
+    return (
+      <HeroUICardHeader
+        className={cn("pb-3", className)}
+        {...props}
+      />
+    );
+  }
+);
 
-function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-description"
-      className={cn("text-muted-foreground text-sm", className)}
-      {...props}
-    />
-  )
-}
+CardHeader.displayName = "CardHeader";
 
-function CardAction({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-action"
-      className={cn(
-        "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
-        className
-      )}
-      {...props}
-    />
-  )
-}
+const CardTitle = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
+  ({ className, ...props }, ref) => {
+    return (
+      <div
+        className={cn("text-large font-semibold leading-none tracking-tight", className)}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
 
-function CardContent({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-content"
-      className={cn("px-6", className)}
-      {...props}
-    />
-  )
-}
+CardTitle.displayName = "CardTitle";
 
-function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="card-footer"
-      className={cn("flex items-center px-6 [.border-t]:pt-6", className)}
-      {...props}
-    />
-  )
-}
+const CardDescription = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
+  ({ className, ...props }, ref) => {
+    return (
+      <div
+        className={cn("text-sm text-muted-foreground", className)}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
+
+CardDescription.displayName = "CardDescription";
+
+const CardContent = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
+  ({ className, ...props }) => {
+    return (
+      <HeroUICardBody
+        className={cn("py-2", className)}
+        {...props}
+      />
+    );
+  }
+);
+
+CardContent.displayName = "CardContent";
+
+const CardFooter = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
+  ({ className, ...props }) => {
+    return (
+      <HeroUICardFooter
+        className={cn("pt-2", className)}
+        {...props}
+      />
+    );
+  }
+);
+
+CardFooter.displayName = "CardFooter";
+
+// CardAction doesn't have a direct HeroUI equivalent, so we'll keep it as a custom component
+const CardAction = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
+  ({ className, ...props }, ref) => {
+    return (
+      <div
+        className={cn(
+          "absolute top-3 right-3",
+          className
+        )}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
+
+CardAction.displayName = "CardAction";
 
 export {
   Card,
@@ -89,4 +136,4 @@ export {
   CardAction,
   CardDescription,
   CardContent,
-}
+};

@@ -1,18 +1,50 @@
-import * as React from "react"
+"use client";
 
-import { cn } from "@/lib/utils"
+import * as React from "react";
+import { Textarea as HeroUITextarea } from "@heroui/react";
+import { cn } from "@/lib/utils";
 
-function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
-  return (
-    <textarea
-      data-slot="textarea"
-      className={cn(
-        "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        className
-      )}
-      {...props}
-    />
-  )
+export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  variant?: "bordered" | "underlined" | "flat" | "faded";
 }
 
-export { Textarea }
+const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
+  ({ className, variant = "bordered", ...props }, ref) => {
+    // Extract props that need special handling
+    const { disabled, required, readOnly, placeholder, rows, ...restProps } = props;
+    
+    // Map rows to minRows for HeroUI
+    const minRows = rows || 3;
+    
+    // Build the props object
+    const heroUIProps: any = {
+      variant,
+      isDisabled: disabled,
+      isRequired: required,
+      isReadOnly: readOnly,
+      placeholder,
+      minRows,
+      classNames: {
+        base: cn("max-w-full", className),
+        input: cn(
+          "resize-y min-h-[60px]",
+          "text-sm placeholder:text-muted-foreground"
+        ),
+        inputWrapper: cn(
+          "shadow-xs",
+          "bg-transparent",
+          "data-[hover=true]:bg-transparent",
+          "group-data-[focus=true]:bg-transparent"
+        ),
+      },
+      ref,
+      ...restProps
+    };
+    
+    return <HeroUITextarea {...heroUIProps} />;
+  }
+);
+
+Textarea.displayName = "Textarea";
+
+export { Textarea };

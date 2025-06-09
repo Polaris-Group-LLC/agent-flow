@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { ThemeToggle } from '@/components/ui/theme-toggle'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Card } from '@/components/ui/card'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -146,11 +147,17 @@ export default function DashboardPage() {
               flow.name.toLowerCase().includes(search.toLowerCase()) ||
               flow.description?.toLowerCase().includes(search.toLowerCase())
             ).map(flow => (
-              <div key={flow.id} className="bg-zinc-900/80 border border-zinc-800/60 rounded-2xl p-6 flex flex-col gap-2 shadow-lg hover:shadow-xl transition group cursor-pointer relative"
-                onClick={() => {
+              <Card 
+                key={flow.id} 
+                className="border-zinc-800/60 p-6 flex flex-col gap-2 hover:shadow-xl transition group cursor-pointer relative"
+                isPressable
+                onPress={() => {
                   setCardLoadingId(flow.id)
                   router.push(`/builder/${flow.id}`)
-                }}>
+                }}
+                shadow="lg"
+                radius="lg"
+              >
                 {cardLoadingId === flow.id && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/60 z-10 rounded-2xl">
                     <Loader2 className="animate-spin" size={32} />
@@ -207,7 +214,7 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-2 mt-auto text-xs text-zinc-500">
                   <span>Edited {flow.updated_at ? new Date(flow.updated_at).toLocaleString() : ''}</span>
                 </div>
-              </div>
+              </Card>
             ))
           ) : (
             <div className="flex flex-col items-center justify-center h-96 bg-gradient-to-br from-primary/60 to-gray-700/60 rounded-2xl shadow-xl p-8">
