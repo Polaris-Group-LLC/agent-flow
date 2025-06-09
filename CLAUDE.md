@@ -16,11 +16,14 @@ npm run lint   # Run ESLint
 ## Architecture
 
 ### Technology Stack
-- **Frontend**: Next.js 14 (App Router), React, TypeScript, Tailwind CSS, shadcn/ui
+- **Frontend**: Next.js 14 (App Router), React, TypeScript, Tailwind CSS 3
+- **UI Components**: HeroUI (migrating from shadcn/ui) with theme support
+- **Theme Management**: next-themes + HeroUI themes (light/dark mode)
 - **Workflow Engine**: ReactFlow for visual builder, LangGraph + LangChain for execution
 - **Database**: Supabase (PostgreSQL with Row Level Security)
 - **Authentication**: Supabase Auth (magic links)
 - **Tool Integration**: Composio SDK
+- **Animation**: Framer Motion 11
 
 ### Core Components
 
@@ -76,3 +79,31 @@ The application requires a `flows` table in Supabase. See `supabase-setup.sql` f
 - ReactFlow handles graph state
 - Individual nodes manage their own configuration
 - No global state management library used
+
+## UI Component Migration (HeroUI)
+
+### Migration Status
+The application is being migrated from shadcn/ui to HeroUI components. A comprehensive refactoring plan is available in `HEROUI_REFACTORING_PLAN.md`.
+
+### Completed Components
+- **Button**: Fully migrated with variant mapping (default→solid/primary, destructive→solid/danger, etc.)
+- **ThemeProvider**: Integrated with HeroUIProvider and next-themes for dark mode support
+- **ThemeToggle**: Custom toggle component using HeroUI Button
+
+### Theme System
+- Light/dark mode support via `next-themes`
+- CSS variables defined in `globals.css` for consistent theming
+- HeroUI theme configuration in `tailwind.config.ts`
+- Theme persistence in localStorage
+
+### Component Usage
+When using UI components:
+- Import from `@/components/ui/` (these are being progressively migrated)
+- Button component maintains shadcn/ui API but uses HeroUI underneath
+- Theme toggle available via `<ThemeToggle />` component
+
+### Migration Notes
+- Tailwind CSS v3 is used (not v4) for HeroUI compatibility
+- OKLCH colors converted to hex format in CSS variables
+- Framer Motion animations preserved from original components
+- Custom components (glow-effect, meteors, etc.) remain unchanged

@@ -4,6 +4,8 @@ import { Plus, LayoutGrid, Search, Settings, User, History, KeyRound, Folder, Lo
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
+import { Button } from '@/components/ui/button'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -101,18 +103,19 @@ export default function DashboardPage() {
   if (isAuthenticated === false) return null
 
   return (
-    <div className="relative min-h-screen bg-black flex flex-col">
+    <div className="relative min-h-screen bg-background flex flex-col">
       <main className="flex-1 flex flex-col px-10 py-8 gap-6">
         <header className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-white tracking-tight mb-1">Dashboard</h1>
-            <div className="text-zinc-400 text-sm">All Flows</div>
+            <h1 className="text-3xl font-bold text-foreground tracking-tight mb-1">Dashboard</h1>
+            <div className="text-muted-foreground text-sm">All Flows</div>
           </div>
           <div className="flex items-center gap-2">
-            <button onClick={handleCreateFlow} className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg font-semibold shadow hover:bg-primary/90 transition hover:scale-105 hover:shadow-xl disabled:opacity-60 disabled:cursor-not-allowed" disabled={createLoading}>
+            <ThemeToggle />
+            <Button onClick={handleCreateFlow} disabled={createLoading}>
               {createLoading ? <Loader2 className="animate-spin" size={18} /> : <Plus size={18} />}
               {createLoading ? 'Creating...' : 'Create Flow'}
-            </button>
+            </Button>
           </div>
         </header>
         <div className="flex items-center gap-3 mb-4">
