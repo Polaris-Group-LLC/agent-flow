@@ -107,3 +107,32 @@ When using UI components:
 - OKLCH colors converted to hex format in CSS variables
 - Framer Motion animations preserved from original components
 - Custom components (glow-effect, meteors, etc.) remain unchanged
+
+## AI Command Bar Features
+
+### Overview
+The AI Command Bar (accessible via Cmd+K) provides intelligent workflow creation through natural language and contextual suggestions.
+
+### Features
+1. **Natural Language Processing**: Describe workflows in plain English, automatically converted to visual nodes
+2. **Contextual AI Suggestions**: Smart recommendations based on current workflow state
+3. **Quick Commands**: Pre-built patterns and common node types
+4. **Workflow Preview**: See generated workflows before adding to canvas
+
+### Contextual Suggestions
+The AI Assistant analyzes your workflow and suggests:
+- **Missing Essential Nodes**: Input/Output nodes when needed
+- **Upgrade Paths**: Suggest Agent nodes when using LLMs
+- **Tool Integration**: Recommend Composio tools for complex workflows
+- **Pattern Recognition**: Suggest parallel processing for multi-step workflows
+
+### Visual Indicators
+- Orange dot on AI Assistant button indicates available suggestions
+- Suggested commands highlighted with warning color in command palette
+- Border indicators for contextual recommendations
+
+### Usage
+- Press `Cmd+K` or click "AI Assistant" button
+- Type natural language description or select from suggestions
+- Preview generated workflow before adding
+- Suggestions update in real-time as you build

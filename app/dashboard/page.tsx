@@ -150,8 +150,7 @@ export default function DashboardPage() {
               <Card 
                 key={flow.id} 
                 className="border-zinc-800/60 p-6 flex flex-col gap-2 hover:shadow-xl transition group cursor-pointer relative"
-                isPressable
-                onPress={() => {
+                onClick={() => {
                   setCardLoadingId(flow.id)
                   router.push(`/builder/${flow.id}`)
                 }}

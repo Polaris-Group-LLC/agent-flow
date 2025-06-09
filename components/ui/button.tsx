@@ -68,7 +68,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         variant === "link" && "min-w-0 p-0 h-auto",
         className
       ),
-      ref,
       ...props,
     };
 
@@ -101,7 +100,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     }
 
     return (
-      <HeroUIButton {...heroUIProps}>
+      <HeroUIButton ref={ref} {...heroUIProps}>
         {children}
       </HeroUIButton>
     );

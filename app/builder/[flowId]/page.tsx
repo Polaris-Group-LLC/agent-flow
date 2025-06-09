@@ -28,7 +28,7 @@ import OutputNode from '@/components/builder-nodes/OutputNode';
 import LLMNode, { LLMNodeData } from '@/components/builder-nodes/LLMNode';
 import ComposioNode, { ComposioNodeData } from '@/components/builder-nodes/ComposioNode';
 import AgentNode, { AgentNodeData } from '@/components/builder-nodes/AgentNode';
-import { MessageSquare, BrainCircuit, Puzzle, ArrowRightCircle, DownloadCloud, PanelLeftOpen, PanelRightOpen, PanelLeftClose, PanelRightClose, Trash2, Group, Share2, Upload, Loader2 } from 'lucide-react';
+import { MessageSquare, BrainCircuit, Puzzle, ArrowRightCircle, DownloadCloud, PanelLeftOpen, PanelRightOpen, PanelLeftClose, PanelRightClose, Trash2, Group, Share2, Upload, Loader2, Sparkles } from 'lucide-react';
 import { Squares } from '@/components/ui/squares-background';
 import { useParams, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -44,6 +44,7 @@ import ToolsWindow from '@/components/builder-nodes/ToolsWindow';
 import OnboardingTutorial from '@/app/dashboard/onboarding/OnboardingTutorial';
 import Joyride from 'react-joyride';
 import AgentBuilder from '@/components/builder-nodes/AgentBuilder';
+import { CommandBar } from '@/components/builder-ui/CommandBar';
 
 interface OnboardingTutorialProps {
   onComplete: () => void;
@@ -188,7 +189,11 @@ const allSidebarItems = [
   const [showTutorial, setShowTutorial] = useState(false);
 
   const [runJoyride, setRunJoyride] = useState(false);
-
+  
+  // Command Bar state
+  const [isCommandBarOpen, setIsCommandBarOpen] = useState(false);
+  const [hasSuggestions, setHasSuggestions] = useState(false);
+  
   const onNodeDataChange = useCallback(
     (id: string, newData: Partial<InputNodeData | LLMNodeData | ComposioNodeData | AgentNodeData>) => {
       setNodes((nds) =>
@@ -199,6 +204,83 @@ const allSidebarItems = [
     },
     [setNodes]
   );
+  
+  // Keyboard shortcut for Command Bar
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Check if Cmd+K or Ctrl+K is pressed
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsCommandBarOpen(prev => !prev);
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+  
+  // Handler for CommandBar workflow creation
+  const handleCreateWorkflowFromCommand = useCallback((newNodes: any[], newEdges: any[]) => {
+    if (!rfInstance) return;
+    
+    // Get the center of the viewport
+    const { x: centerX, y: centerY } = rfInstance.screenToFlowPosition({
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2,
+    });
+    
+    // Calculate bounds of new nodes to center them
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    newNodes.forEach(node => {
+      minX = Math.min(minX, node.position.x);
+      minY = Math.min(minY, node.position.y);
+      maxX = Math.max(maxX, node.position.x);
+      maxY = Math.max(maxY, node.position.y);
+    });
+    
+    const nodesWidth = maxX - minX;
+    const nodesHeight = maxY - minY;
+    const offsetX = centerX - nodesWidth / 2 - minX;
+    const offsetY = centerY - nodesHeight / 2 - minY;
+    
+    // Adjust positions and add unique IDs
+    const adjustedNodes = newNodes.map(node => ({
+      ...node,
+      id: getUniqueNodeId(node.type || 'node'),
+      position: {
+        x: node.position.x + offsetX,
+        y: node.position.y + offsetY,
+      },
+      data: {
+        ...node.data,
+        onNodeDataChange: onNodeDataChange,
+      }
+    }));
+    
+    // Update edge IDs to match new node IDs
+    const nodeIdMap = new Map();
+    newNodes.forEach((node, index) => {
+      nodeIdMap.set(node.id, adjustedNodes[index].id);
+    });
+    
+    const adjustedEdges = newEdges.map(edge => ({
+      ...edge,
+      id: `e${nodeIdMap.get(edge.source)}-${nodeIdMap.get(edge.target)}`,
+      source: nodeIdMap.get(edge.source),
+      target: nodeIdMap.get(edge.target),
+      type: 'smoothstep',
+      animated: true,
+      style: { stroke: '#fff5f5', strokeWidth: 2 },
+    }));
+    
+    // Push to history before adding nodes
+    setHistory((h) => [...h, { nodes, edges }]);
+    setNodes(nds => nds.concat(adjustedNodes));
+    setEdges(eds => eds.concat(adjustedEdges));
+    
+    // Close the command bar
+    setIsCommandBarOpen(false);
+  }, [rfInstance, onNodeDataChange, nodes, edges]);
 
   const nodeTypes: NodeTypes = useMemo(() => ({
     customInput: (props) => <InputNode {...props} data={{...props.data, onNodeDataChange: onNodeDataChange as any }} />,
@@ -644,6 +726,26 @@ const allSidebarItems = [
   };
 
   // --- Play Button Logic ---
+  // Check for contextual suggestions
+  useEffect(() => {
+    const hasInput = nodes.some(n => n.type === 'customInput' || n.type === 'input');
+    const hasOutput = nodes.some(n => n.type === 'customOutput' || n.type === 'output');
+    const nodeCount = nodes.length;
+    const hasLLM = nodes.some(n => n.type === 'llm');
+    const hasAgent = nodes.some(n => n.type === 'agent');
+    const hasComposio = nodes.some(n => n.type === 'composio');
+    
+    // Show suggestions indicator if there are helpful suggestions
+    const shouldShowSuggestions = 
+      (!hasInput && nodeCount > 0) ||
+      (!hasOutput && nodeCount > 2) ||
+      (hasLLM && !hasAgent && nodeCount < 5) ||
+      (nodeCount >= 3 && !hasComposio) ||
+      (nodeCount >= 4 && edges.length < nodeCount - 1);
+    
+    setHasSuggestions(shouldShowSuggestions);
+  }, [nodes, edges]);
+
   const handleRunAgentFromBuilder = async () => {
     const graph = handleSerializeGraph();
     if (!graph || graph.nodes.length === 0) {
@@ -981,6 +1083,15 @@ const allSidebarItems = [
         }}
       />
 
+      {/* Command Bar */}
+      <CommandBar 
+        isOpen={isCommandBarOpen}
+        onOpenChange={setIsCommandBarOpen}
+        onCreateWorkflow={handleCreateWorkflowFromCommand}
+        currentNodes={nodes}
+        currentEdges={edges}
+      />
+
       {/* Top Bar */}
       <header className="h-16 flex items-center justify-between px-6 shrink-0" style={{ 
         background: 'rgba(0, 0, 0, 0.7)',
@@ -1050,6 +1161,22 @@ const allSidebarItems = [
             title="Load workflow from JSON file"
           >
             <Upload size={16} /> Upload
+          </button>
+          {/* AI Command Bar Button */}
+          <button 
+            onClick={() => setIsCommandBarOpen(true)}
+            className="px-3 py-1.5 text-sm rounded-md transition-all duration-200 flex items-center gap-1.5 hover:bg-[#fff5f5]/20 hover:scale-105 relative"
+            style={{
+              background: 'rgba(255, 245, 245, 0.1)',
+              color: '#fff5f5',
+              backdropFilter: 'blur(5px)',
+            }}
+            title="AI Command Bar (Cmd+K)"
+          >
+            <Sparkles size={16} /> AI Assistant
+            {hasSuggestions && (
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-warning rounded-full animate-pulse" />
+            )}
           </button>
           {/* Hidden file input */}
           <input 

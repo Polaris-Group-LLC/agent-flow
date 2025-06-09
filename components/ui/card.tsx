@@ -18,7 +18,8 @@ interface CardProps extends React.ComponentProps<"div"> {
 }
 
 const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, children, isPressable, isBlurred, shadow = "sm", radius = "lg", onPress, ...props }) => {
+  ({ className, children, isPressable, isBlurred, shadow = "sm", radius = "lg", onPress, ...props }, _ref) => {
+    // Note: HeroUI Card doesn't support ref forwarding directly
     // HeroUI Card doesn't accept ref directly, we'll use the props approach
     const cardProps: any = {
       className: cn(
@@ -44,7 +45,8 @@ const Card = React.forwardRef<HTMLDivElement, CardProps>(
 Card.displayName = "Card";
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
-  ({ className, ...props }) => {
+  ({ className, ...props }, _ref) => {
+    // Note: HeroUI CardHeader doesn't support ref forwarding directly
     return (
       <HeroUICardHeader
         className={cn("pb-3", className)}
@@ -85,7 +87,8 @@ const CardDescription = React.forwardRef<HTMLDivElement, React.ComponentProps<"d
 CardDescription.displayName = "CardDescription";
 
 const CardContent = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
-  ({ className, ...props }) => {
+  ({ className, ...props }, _ref) => {
+    // Note: HeroUI CardBody doesn't support ref forwarding directly
     return (
       <HeroUICardBody
         className={cn("py-2", className)}
@@ -98,7 +101,8 @@ const CardContent = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">
 CardContent.displayName = "CardContent";
 
 const CardFooter = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(
-  ({ className, ...props }) => {
+  ({ className, ...props }, _ref) => {
+    // Note: HeroUI CardFooter doesn't support ref forwarding directly
     return (
       <HeroUICardFooter
         className={cn("pt-2", className)}

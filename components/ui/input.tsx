@@ -37,11 +37,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           "!cursor-text"
         ),
       },
-      ref,
       ...restProps
     };
     
-    return <HeroUIInput {...heroUIProps} />;
+    return <HeroUIInput ref={ref} {...heroUIProps} />;
   }
 );
 
